@@ -1,6 +1,6 @@
-# Node.js OAuth & Number Verification API call
+# Node.js OAuth & Number Verification API 
 
-This is a Node.js application that integrates with Vonage APIs to:
+This is a Node.js application that integrates with Vonage Network APIs to:
 
 1. Generate an OAuth login URL.
 2. Handle the OAuth callback to exchange an authorization code for an access token.
@@ -17,13 +17,12 @@ This is a Node.js application that integrates with Vonage APIs to:
 
 ## Prerequisites
 
-- **Node.js 18+** 
+- Node.js (>= 18)
 
 ## Installation
 
 1. Install dependencies:
    ```bash
-   cd server
    npm install
    ```
 
@@ -43,25 +42,17 @@ Start the server:
 node server.js 
 ```
 
-## API Endpoints
+## Troubleshooting
 
-### POST `/login`
+1. **Missing Environment Variables**  
+   Ensure all required variables (`JWT`, `VONAGE_APPLICATION_ID`, and `REDIRECT_URI`) are set in your `.env` file.
 
-Generates an auth URL for OAuth.
+2. **Invalid Node.js Version**  
+   This app uses the native `fetch` API, available in Node.js 18+. If you're using an older version, install `node-fetch`:
+   ```bash
+   npm install node-fetch
+   ```
 
-#### Request:
-
-```json
-{
-  "phone": "+1234567890"
-}
-```
-
-#### Response:
-```json
-{
-  "url": "https://oidc.idp.vonage.com/oauth2/auth?client_id=..."
-}
-```
-
+3. **OAuth Errors**  
+   Double-check your application setup in the [Vonage Dashboard](https://developer.vonage.com/dashboard) and ensure the `redirect URI` matches.
 
