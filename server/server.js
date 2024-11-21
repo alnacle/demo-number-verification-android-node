@@ -3,10 +3,15 @@ const crypto = require("crypto");
 const cors = require("cors");
 require("dotenv").config();
 
-// URIs
+// Auth URIs
 const oidc_auth_uri = "https://oidc.idp.vonage.com/oauth2/auth";
 const camara_auth_uri = "https://api-eu-3.vonage.com/oauth2/token";
+
+// Number Verification API
 const nv_uri = "https://api-eu.vonage.com/camara/number-verification/v031/verify";
+
+// Network Enablement API
+const ne_uri = "https://api-eu.vonage.com/v0.1/network-enablement";
 
 // Load config from .env
 const jwt = process.env.JWT;
@@ -34,36 +39,48 @@ const makeFetchRequest = async (url, options) => {
 // App Setup
 const app = express();
 
-app.set("view engine");
-app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
 // Routes
-app.post("/login", (req, res) => {
-  const { phone } = req.body;
+app.post("/login", async (req, res) => {
+  const { phone } = req.body || null;
   if (!phone) {
     return res.status(400).json({ error: "Phone number is required." });
   }
 
-  const state = generateRandomString(16);
-  const scope =
-    "openid dpv:FraudPreventionAndDetection#number-verification-verify-read";
-  const query = new URLSearchParams({
-    client_id: client_id,
-    response_type: "code",
-    scope,
-    redirect_uri: redirect_ui,
-    state,
-    login_hint: `+${phone}`,
-  });
+  app.set('phone', phone);
 
-  const url = `${oidc_auth_uri}?${query.toString()}`;
-  res.json({ url });
+  const data = {
+    phone_number: phone,
+    scopes: ["dpv:FraudPreventionAndDetection#number-verification-verify-read"],
+    state: generateRandomString(20),
+  };
+
+  const headers = {
+    Authorization: `Bearer ${jwt}`,
+    "Content-Type": "application/json",
+  };
+
+  try {
+    // Network Enablement API call
+    const response = await makeFetchRequest(ne_uri, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(data),
+    });
+    console.log(response);
+    res.json(response);
+  } catch (error) {
+    console.error("Error when with Network Enablement API:", error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get("/callback", async (req, res) => {
   const { code, state, error: errorDescription } = req.query;
+
+  phone = req.app.get('phone');
 
   if (!code || !state) {
     return res
@@ -95,7 +112,7 @@ app.get("/callback", async (req, res) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ phoneNumber: req.body.phone }),
+      body: JSON.stringify({ phoneNumber: phone }),
     });
 
     res.json(nvResponse);
