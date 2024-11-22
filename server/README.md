@@ -2,7 +2,7 @@
 
 This is a Node.js application that integrates with Vonage Network APIs to:
 
-1. Generate an OAuth login URL.
+1. Generate an OAuth auth URL using Vonage's Network Enablement API.
 2. Handle the OAuth callback to exchange an authorization code for an access token.
 3. Verify a phone number using Vonage's Number Verification API.
 
