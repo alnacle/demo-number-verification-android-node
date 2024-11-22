@@ -12,7 +12,7 @@ This demo shows how to verify your identify using your phone number. The demo us
 
 ## Architecture 
 
-* [Android client](client)
+* [Android mobile app](client)
 * [Node backend](server)
 
 ## License
