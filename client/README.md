@@ -15,7 +15,7 @@ performs number verification.
 
 ## Dependencies
 
-- [Vonage Number Verificaion Client SDK](https://github.com/Vonage/number-verification-sdk-android) to force using Mobile data over WiFi.
+- [Vonage Number Verification SDK](https://github.com/Vonage/number-verification-sdk-android) to force the use of mobile data over WiFi.
 - **OkHttp**: For making HTTP requests.
 - **Kotlin Coroutines**: For asynchronous programming.
 - **Jetpack Compose**: For UI.
