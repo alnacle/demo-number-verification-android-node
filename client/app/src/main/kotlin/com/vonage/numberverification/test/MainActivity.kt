@@ -17,6 +17,8 @@ import com.vonage.numberverification.VGNumberVerificationParameters
 import com.vonage.numberverification.test.ui.theme.NumberVerificationTheme
 import kotlinx.coroutines.*
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 
@@ -35,11 +37,17 @@ class MainActivity : ComponentActivity() {
 // Function to send login request
 suspend fun sendLogin(url: String, phoneNumber: String): Result<String> {
     val client = OkHttpClient()
-    val formBody = FormBody.Builder().add("phone", phoneNumber).build()
+
+    val jsonBody = """
+        {
+            "phone": "$phoneNumber"
+        }
+    """.trimIndent()
+    val requestBody = jsonBody.toRequestBody("application/json".toMediaType())
     val request = Request.Builder()
         .url(url)
-        .post(formBody)
-        .header("Content-Type", "application/x-www-form-urlencoded")
+        .post(requestBody)
+        .header("Content-Type", "application/json")
         .build()
 
     return withContext(Dispatchers.IO) {
