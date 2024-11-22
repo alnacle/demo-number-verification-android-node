@@ -58,10 +58,7 @@ const val LOGIN_URL = "https://your-node-backend-url/login"
 1. **Error: HTTP 400/500 from the Backend**
    - Ensure the backend is running and accessible at the `LOGIN_URL`.
 
-2. **Verification Failed**
-   - Verify that the Vonage SDK is properly initialized with valid credentials.
-
-3. **Build Issues**
+2. **Build Issues**
    - Sync Gradle and ensure all dependencies are downloaded.
 
 
