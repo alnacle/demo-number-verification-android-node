@@ -13,6 +13,9 @@ const nv_uri = "https://api-eu.vonage.com/camara/number-verification/v031/verify
 // Network Enablement API
 const ne_uri = "https://api-eu.vonage.com/v0.1/network-enablement";
 
+// scope 
+const fraud_scope = "dpv:FraudPreventionAndDetection#number-verification-verify-read"
+
 // Load config from .env
 const jwt = process.env.JWT;
 const client_id = process.env.VONAGE_APPLICATION_ID;
@@ -44,16 +47,18 @@ app.use(cors());
 
 // Routes
 app.post("/login", async (req, res) => {
+  console.log(req.body)
   const { phone } = req.body || null;
   if (!phone) {
     return res.status(400).json({ error: "Phone number is required." });
   }
 
+  // store phone number to be used in the other route
   app.set('phone', phone);
 
   const data = {
     phone_number: phone,
-    scopes: ["dpv:FraudPreventionAndDetection#number-verification-verify-read"],
+    scopes: [fraud_scope],
     state: generateRandomString(20),
   };
 
@@ -69,8 +74,10 @@ app.post("/login", async (req, res) => {
       headers: headers,
       body: JSON.stringify(data),
     });
-    console.log(response);
-    res.json(response);
+    auth_url = { url: response.scopes[fraud_scope].auth_url }
+    console.log(auth_url)
+    res.json(auth_url);
+
   } catch (error) {
     console.error("Error when with Network Enablement API:", error.message);
     res.status(500).json({ error: error.message });
@@ -80,6 +87,7 @@ app.post("/login", async (req, res) => {
 app.get("/callback", async (req, res) => {
   const { code, state, error: errorDescription } = req.query;
 
+  // phone number has been previously stored
   phone = req.app.get('phone');
 
   if (!code || !state) {
