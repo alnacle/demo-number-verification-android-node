@@ -16,16 +16,10 @@ const ne_uri = "https://api-eu.vonage.com/v0.1/network-enablement";
 // scope 
 const fraud_scope = "dpv:FraudPreventionAndDetection#number-verification-verify-read"
 
-// Load config from .env
-const jwt = process.env.JWT;
-const client_id = process.env.VONAGE_APPLICATION_ID;
-const redirect_ui = process.env.REDIRECT_URI || "http://localhost:3000/callback";
-
-if (!jwt || !client_id || !redirect_ui) {
-  throw new Error(
-    "Missing required environment variables: JWT, VONAGE_APPLICATION_ID, or REDIRECT_URI",
-  );
-}
+const {
+    JWT = "",
+    REDIRECT_URI = "http://localhost:3000/callback",
+} = process.env
 
 const generateRandomString = (length) =>
   crypto.randomBytes(length).toString("hex").slice(0, length);
@@ -63,7 +57,7 @@ app.post("/login", async (req, res) => {
   };
 
   const headers = {
-    Authorization: `Bearer ${jwt}`,
+    Authorization: `Bearer ${JWT}`,
     "Content-Type": "application/json",
   };
 
@@ -102,11 +96,11 @@ app.get("/callback", async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Bearer ${jwt}`,
+        Authorization: `Bearer ${JWT}`,
       },
       body: new URLSearchParams({
         code,
-        redirect_uri: redirect_ui,
+        redirect_uri: REDIRECT_URI,
         grant_type: "authorization_code",
       }),
     });

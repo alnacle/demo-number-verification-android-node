@@ -30,7 +30,6 @@ This is a Node.js application that integrates with Vonage Network APIs to:
 
    ```env
    JWT=your-jwt-token
-   VONAGE_APPLICATION_ID=your-application-id
    REDIRECT_URI=http://localhost:3000/callback
    ```
 
@@ -45,7 +44,7 @@ node server.js
 ## Troubleshooting
 
 1. **Missing Environment Variables**  
-   Ensure all required variables (`JWT`, `VONAGE_APPLICATION_ID`, and `REDIRECT_URI`) are set in your `.env` file.
+   Ensure all required variables (`JWT`, and `REDIRECT_URI`) are set in your `.env` file.
 
 2. **Invalid Node.js Version**  
    This app uses the native `fetch` API, available in Node.js 18+. If you're using an older version, install `node-fetch`:
